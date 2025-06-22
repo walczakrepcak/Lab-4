@@ -2,11 +2,10 @@
 
 # Uzycie konstrukcji 'case' dla elastycznego parsowania argumentow
 case "$1" in
-    "--date")
+    "--date"|"-d")
         echo "Dzisiejsza data: $(date +%Y-%m-%d)"
         ;;
-    "--logs")
-        # Okreslenie liczby plikow logow do utworzenia. Domyślnie 100, jesli drugi argument jest pusty.
+    "--logs"|"-l") # Okreslenie liczby plikow logow do utworzenia. Domyślnie 100, jesli drugi argument jest pusty.
         NUM_FILES=${2:-100}
         for i in $(seq 1 "$NUM_FILES"); do
             FILENAME="log${i}.txt"
@@ -41,32 +40,34 @@ case "$1" in
             echo "Blad podczas klonowania repozytorium. Upewnij sie, ze katalog docelowy nie istnieje i masz uprawnienia."
         fi
         ;;
-    "--help") # Tutaj powinien być już wstępny help, rozbudujemy go później
-        echo "Uzycie: skrypt.sh [OPCJA] [ARGUMENT]"
-        echo ""
-        echo "Opcje:"
-        echo "  --date         : Wyswietla dzisiejsza date w formacie RRRR-MM-DD."
-        echo "  --logs [LICZBA]: Tworzy pliki logx.txt. Domyślnie 100 plikow."
-        echo "                   Kazdy plik zawiera swoja nazwe, nazwe skryptu i date."
-        echo "  --init         : Klonuje aktualne repozytorium do biezacego katalogu i dodaje je do zmiennej PATH (tymczasowo)."
-        echo "  --help         : Wyswietla ten komunikat pomocy."
-        ;;
-    *)
-        # Domyślny komunikat dla nieznanych opcji
-        echo "Nieznana opcja. Uzyj --help aby zobaczyc dostepne opcje."
-        ;;
-    "--error" | "-e")
-        NUM_ERRORS=${2:-100} # Domyślnie 100, jeśli $2 jest puste
+    "--error"|"-e")
+        NUM_ERRORS=${2:-100} # Domyślnie 100, jesli $2 jest pusty
         for i in $(seq 1 "$NUM_ERRORS"); do
             ERROR_DIR="error${i}"
             ERROR_FILE="${ERROR_DIR}/error${i}.txt"
-            mkdir -p "$ERROR_DIR" # Tworzy katalog, jeśli nie istnieje
-            echo "To jest plik bledu $i." > "$ERROR_FILE"
-            echo "Utworzono $ERROR_FILE"
+            
+            mkdir -p "$ERROR_DIR" # Tworzy katalog, jesli nie istnieje
+            echo "Nazwa katalogu: $ERROR_DIR" > "$ERROR_FILE"
+            echo "Nazwa pliku: $ERROR_FILE" >> "$ERROR_FILE"
+            echo "Nazwa skryptu: skrypt.sh" >> "$ERROR_FILE"
+            echo "Data utworzenia: $(date +%Y-%m-%d_%H-%M-%S)" >> "$ERROR_FILE"
         done
-        echo "Utworzono ${NUM_ERRORS} plikow bledow."
+        echo "Utworzono ${NUM_ERRORS} katalogow errorx/errorx.txt."
+        ;;
+    "--help"|"-h")
+        echo "Uzycie: skrypt.sh [OPCJA] [ARGUMENT]"
+        echo ""
+        echo "Opcje:"
+        echo "  --date | -d         : Wyswietla dzisiejsza date w formacie RRRR-MM-DD."
+        echo "  --logs | -l | -1 [LICZBA]: Tworzy pliki logx.txt. Domyślnie 100 plikow."
+        echo "                            Kazdy plik zawiera swoja nazwe, nazwe skryptu i date."
+        echo "  --init              : Klonuje aktualne repozytorium do biezacego katalogu i dodaje je do zmiennej PATH (tymczasowo)."
+        echo "  --error | -e [LICZBA]: Tworzy katalogi errorx z plikami errorx.txt. Domyślnie 100 plikow."
+        echo "                         Kazdy plik zawiera swoja nazwe katalogu, nazwe pliku, nazwe skryptu i date."
+        echo "  --help | -h         : Wyswietla ten komunikat pomocy."
         ;;
     *)
+        # Domyślny komunikat dla nieznanych opcji
         echo "Nieznana opcja. Uzyj --help lub -h aby zobaczyc dostepne opcje."
         ;;
 esac
