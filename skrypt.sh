@@ -55,4 +55,18 @@ case "$1" in
         # Domyślny komunikat dla nieznanych opcji
         echo "Nieznana opcja. Uzyj --help aby zobaczyc dostepne opcje."
         ;;
+    "--error" | "-e")
+        NUM_ERRORS=${2:-100} # Domyślnie 100, jeśli $2 jest puste
+        for i in $(seq 1 "$NUM_ERRORS"); do
+            ERROR_DIR="error${i}"
+            ERROR_FILE="${ERROR_DIR}/error${i}.txt"
+            mkdir -p "$ERROR_DIR" # Tworzy katalog, jeśli nie istnieje
+            echo "To jest plik bledu $i." > "$ERROR_FILE"
+            echo "Utworzono $ERROR_FILE"
+        done
+        echo "Utworzono ${NUM_ERRORS} plikow bledow."
+        ;;
+    *)
+        echo "Nieznana opcja. Uzyj --help lub -h aby zobaczyc dostepne opcje."
+        ;;
 esac
